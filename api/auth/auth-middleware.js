@@ -29,7 +29,8 @@ function restricted(req, res, next) {
 function checkUsernameFree(req, res, next) {
   Users.findBy({ username: req.body.username })
   .then(users => {
-    if(users) {
+    console.log(users)
+    if(users.length > 0) {
       res.status(422).json({
         "message": "Username taken"
       })
@@ -51,7 +52,7 @@ function checkUsernameFree(req, res, next) {
 function checkUsernameExists(req, res, next) {
   Users.findBy({ username: req.body.username })
   .then(users => {
-    if (users) {
+    if (users.length > 0) {
       next()
     } else {
       res.status(401).json({
