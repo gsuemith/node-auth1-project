@@ -67,6 +67,7 @@ router.post("/login", (req, res, next) => {
     if (user && bcrypt.compareSync(
       req.body.password, user.password
     )) {
+      req.session.user = user
       res.json({
         message: `Welcome ${user.username}!`
       })
@@ -94,7 +95,23 @@ router.post("/login", (req, res, next) => {
     "message": "no session"
   }
  */
-
+router.get("/logout", (req, res, next) => {
+  if (req.session && req.session.user) {
+    req.session.destroy(err => {
+      if (err) {
+        next(err)
+      } else {
+        res.status(200).json({
+          "message": "logged out"
+        })
+      }
+    })
+  } else {
+    res.status(200).json({
+      "message": "no session"
+    })
+  }
+})
  
 // Don't forget to add the router to the `exports` object so it can be required in other modules
 module.exports = router
