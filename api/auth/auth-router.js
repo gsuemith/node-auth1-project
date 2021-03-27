@@ -60,7 +60,24 @@ router.post("/register", (req, res, next) => {
     "message": "Invalid credentials"
   }
  */
-
+router.use("/login", checkUsernameExists)
+router.post("/login", (req, res, next) => {
+  Users.findBy({ username: req.body.username })
+  .then(([user]) => {
+    if (user && bcrypt.compareSync(
+      req.body.password, user.password
+    )) {
+      res.json({
+        message: `Welcome ${user.username}!`
+      })
+    } else {
+      res.status(401).json({
+        "message": "Invalid credentials"
+      })
+    }
+  })
+  .catch(err => next(err))
+})
 
 /**
   3 [GET] /api/auth/logout
